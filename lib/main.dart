@@ -1,67 +1,67 @@
-import 'package:flutter/material.dart';
+// ignore_for_file: prefer_const_constructors
+// ignore_for_file: use_key_in_widget_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables
 
-void main() {
-  runApp(const MyApp());
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
+
+import 'package:flutter_glow/flutter_glow.dart';
+import 'package:flutterone/widgets/emailverify.dart';
+import 'package:flutterone/widgets/home.dart';
+import 'package:flutterone/widgets/login.dart';
+import 'package:flutterone/widgets/mainscreen.dart';
+
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  SystemChrome.setSystemUIOverlayStyle(
+      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo another Page'),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
-    );
+        theme: ThemeData(
+            fontFamily: 'Cedric', backgroundColor: Colors.transparent),
+        home: Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              shadowColor: Colors.transparent,
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const GlowText(
+                    'Bubble',
+                    style: TextStyle(
+                        fontSize: 38, color: Color.fromRGBO(255, 192, 245, 1)),
+                  ),
+                ],
+              )),
+          body: Container(
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.pink, Colors.redAccent],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft)),
+            child: StreamBuilder(
+                stream: FirebaseAuth.instance.authStateChanges(),
+                builder: ((context, snapshot) {
+                  if (snapshot.hasData) {
+                    if (FirebaseAuth.instance.currentUser!.emailVerified) {
+                      return Mainscreen();
+                    } else
+                      return VerifyEmail();
+                  }
+                  return Login();
+                })),
+          ),
+        ));
   }
 }
