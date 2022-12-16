@@ -2,10 +2,13 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_glow/flutter_glow.dart';
+import 'package:flutterone/widgets/addimgscreen.dart';
 import 'package:flutterone/widgets/card.dart';
 import 'package:swipe_cards/draggable_card.dart';
 import 'package:swipe_cards/swipe_cards.dart';
@@ -18,11 +21,33 @@ class Mainscreen extends StatefulWidget {
   State<Mainscreen> createState() => _MainscreenState();
 }
 
-class _MainscreenState extends State<Mainscreen> {
-  bool urlgot = true, temp1 = true, temp2 = true, temp3 = true;
-  var temp = true;
+class CurvedHeaderPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    var path = Path();
+    path.lineTo(0, size.height - 60);
+    path.quadraticBezierTo(
+      size.width / 2,
+      size.height,
+      size.width,
+      size.height - 60,
+    );
+    path.lineTo(size.width, 0);
+    path.close();
 
-  var pp = '';
+    var paint = Paint();
+    paint.color = Colors.pink;
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class _MainscreenState extends State<Mainscreen> {
+  bool urlgot = true;
+  var scaffoldKey = GlobalKey<ScaffoldState>();
+  String pp = '';
 
   Future<String> geturl() async {
     final dpUrl = FirebaseFirestore.instance
@@ -47,18 +72,18 @@ class _MainscreenState extends State<Mainscreen> {
 
   double _rating = 0;
 
-  setparticulaarfalse(String code) {
-    setState(() {
-      if (code.contains('2')) {
-        temp2 = false;
-        temp1 = true;
-      }
-      if (code.contains('1')) {
-        temp1 = false;
-        temp2 = true;
-      }
-    });
-  }
+  // setparticulaarfalse(String code) {
+  //   setState(() {
+  //     if (code.contains('2')) {
+  //       temp2 = false;
+  //       temp1 = true;
+  //     }
+  //     if (code.contains('1')) {
+  //       temp1 = false;
+  //       temp2 = true;
+  //     }
+  //   });
+  // }
 
   List<String> imagelist = [
     'https://s2.best-wallpaper.net/wallpaper/iphone/1902/Beautiful-girl-in-summer-sunshine_iphone_1242x2688.jpg',
@@ -77,81 +102,71 @@ class _MainscreenState extends State<Mainscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldKey,
       drawer: Drawer(
+        elevation: 5,
+        width: MediaQuery.of(context).size.width * 0.6,
         backgroundColor: Color.fromARGB(86, 255, 0, 187),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [Colors.pink, Colors.redAccent],
-                      begin: Alignment.topRight,
-                      end: Alignment.bottomLeft)),
-              child:
-                  Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                temp
-                    ? Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                                blurRadius: 10,
-                                color: Colors.black,
-                                spreadRadius: 5)
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.grey,
-                          child: CircularProgressIndicator(),
-                          backgroundImage: !urlgot
-                              ? Image.network(pp).image
-                              : Image.asset('res/no-profile-picture-icon.png')
-                                  .image,
-                          onBackgroundImageError: (exception, stackTrace) {
-                            setState(() {
-                              urlgot = false;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(exception.toString())));
-                          },
-                        ),
-                      )
-                    : Container(
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 0, 0, 0),
-                          shape: BoxShape.circle,
-                          boxShadow: [
-                            BoxShadow(
-                                blurRadius: 6,
-                                color: Color.fromARGB(95, 0, 0, 0),
-                                spreadRadius: 4)
-                          ],
-                        ),
-                        child: CircleAvatar(
-                          radius: 65,
-                          backgroundColor: Colors.grey,
-                          backgroundImage: !urlgot
-                              ? Image.network(pp).image
-                              : Image.asset('res/no-profile-picture-icon.png')
-                                  .image,
-                          onBackgroundImageError: (exception, stackTrace) {
-                            setState(() {
-                              urlgot = false;
-                            });
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text(exception.toString())));
-                          },
-                        ),
+            CustomPaint(
+              painter: CurvedHeaderPainter(),
+              child: DrawerHeader(
+                child:
+                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                              blurRadius: 5,
+                              color: Color.fromARGB(213, 56, 21, 21),
+                              spreadRadius: 0.5)
+                        ],
                       ),
-              ]),
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.grey,
+                        child: urlgot ? CircularProgressIndicator() : null,
+                        backgroundImage: !urlgot
+                            ? Image.network(pp).image
+                            : Image.asset('res/no-profile-picture-icon.png')
+                                .image,
+                        onBackgroundImageError: (exception, stackTrace) {
+                          setState(() {
+                            urlgot = false;
+                          });
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(exception.toString())));
+                        },
+                      ))
+                ]),
+              ),
+            ),
+            Expanded(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.home),
+                    title: Text('Home'),
+                  ),
+                  ListTile(
+                    onTap: () {},
+                    leading: Icon(Icons.settings),
+                    title: Text('Settings'),
+                  ),
+                ],
+              ),
             ),
             ListTile(
-              title: const Text(
-                'Sign Out',
-                selectionColor: Colors.white,
+              title: Container(
+                child: const Text(
+                  'Sign Out',
+                  selectionColor: Colors.pink,
+                  style: TextStyle(fontSize: 20),
+                ),
               ),
               onTap: () {
                 FirebaseAuth.instance.signOut();
@@ -174,333 +189,7 @@ class _MainscreenState extends State<Mainscreen> {
           child: Padding(
               padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
               child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        temp
-                            ? FutureBuilder<String>(
-                                future: geturl(),
-                                builder: ((context, snapshot) {
-                                  geturl().then((value) {
-                                    setState(() {
-                                      temp = false;
-                                    });
-                                  });
-                                  return CircleAvatar(
-                                    radius: 25,
-                                    backgroundColor: Colors.grey,
-                                    child: CircularProgressIndicator(),
-                                    backgroundImage: !urlgot
-                                        ? Image.network(pp).image
-                                        : Image.asset(
-                                                'res/no-profile-picture-icon.png')
-                                            .image,
-                                    onBackgroundImageError:
-                                        (exception, stackTrace) {
-                                      setState(() {
-                                        urlgot = false;
-                                      });
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content:
-                                                  Text(exception.toString())));
-                                    },
-                                  );
-                                }))
-                            : CircleAvatar(
-                                radius: 25,
-                                backgroundColor: Colors.grey,
-                                backgroundImage: !urlgot
-                                    ? Image.network(pp).image
-                                    : Image.asset(
-                                            'res/no-profile-picture-icon.png')
-                                        .image,
-                                onBackgroundImageError:
-                                    (exception, stackTrace) {
-                                  setState(() {
-                                    urlgot = false;
-                                  });
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text(exception.toString())));
-                                },
-                              ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                          onPressed: () {
-                            //do some
-                          },
-                          child: Text("Superlike")),
-                      ElevatedButton(
-                          onPressed: () {
-                            //do some
-                          },
-                          child: Text("Like"))
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Center(
-                        child: Stack(children: [
-                          temp1
-                              ? LongPressDraggable<Column>(
-                                  childWhenDragging: Container(
-                                    height: 100,
-                                    width: 100,
-                                  ),
-                                  feedback: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.transparent,
-                                          boxShadow: [
-                                            BoxShadow(
-                                                blurRadius: 6,
-                                                color:
-                                                    Color.fromARGB(95, 0, 0, 0),
-                                                spreadRadius: 4)
-                                          ]),
-                                      child:
-                                          TinderLikeCard(color: imagelist[1])),
-                                  child: Column(
-                                    children: [
-                                      Center(
-                                        child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.85,
-                                            decoration: BoxDecoration(
-                                                color: Colors.transparent,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      blurRadius: 6,
-                                                      color: Color.fromARGB(
-                                                          95, 0, 0, 0),
-                                                      spreadRadius: 6)
-                                                ]),
-                                            child: TinderLikeCard(
-                                                color: imagelist[1])),
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.transparent,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  blurRadius: 6,
-                                                  color: Color.fromARGB(
-                                                      95, 0, 0, 0),
-                                                  spreadRadius: 4)
-                                            ]),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20)),
-                                          child: Container(
-                                            color: Colors.white,
-                                            height: 80,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.85,
-                                            child: Row(children: [
-                                              SizedBox(
-                                                width: 40,
-                                              ),
-                                              RatingBar.builder(
-                                                initialRating: 0,
-                                                direction: Axis.horizontal,
-                                                itemCount: 5,
-                                                itemPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 4.0),
-                                                itemBuilder: (context, index) {
-                                                  switch (index) {
-                                                    case 0:
-                                                      return Icon(
-                                                        Icons
-                                                            .sentiment_very_dissatisfied,
-                                                        color: Colors.red,
-                                                      );
-                                                    case 1:
-                                                      return Icon(
-                                                        Icons
-                                                            .sentiment_dissatisfied,
-                                                        color: Colors.redAccent,
-                                                      );
-                                                    case 2:
-                                                      return Icon(
-                                                        Icons.sentiment_neutral,
-                                                        color: Colors.amber,
-                                                      );
-                                                    case 3:
-                                                      return Icon(
-                                                        Icons
-                                                            .sentiment_satisfied,
-                                                        color:
-                                                            Colors.lightGreen,
-                                                      );
-                                                    case 4:
-                                                      return Icon(
-                                                        Icons
-                                                            .sentiment_very_satisfied,
-                                                        color: Colors.green,
-                                                      );
-                                                    default:
-                                                      return Container();
-                                                  }
-                                                },
-                                                onRatingUpdate: (rating) {
-                                                  setparticulaarfalse('1');
-                                                  setState(() {
-                                                    _rating = rating;
-                                                  });
-                                                },
-                                                updateOnDrag: true,
-                                              )
-                                            ]),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ))
-                              : Container(),
-                          temp2
-                              ? LongPressDraggable<Column>(
-                                  childWhenDragging: Container(
-                                    height: 100,
-                                    width: 100,
-                                  ),
-                                  feedback: Container(
-                                      decoration: BoxDecoration(
-                                          color: Colors.transparent,
-                                          boxShadow: [
-                                            BoxShadow(
-                                                blurRadius: 6,
-                                                color:
-                                                    Color.fromARGB(95, 0, 0, 0),
-                                                spreadRadius: 4)
-                                          ]),
-                                      child:
-                                          TinderLikeCard(color: imagelist[0])),
-                                  child: Column(
-                                    children: [
-                                      Center(
-                                        child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.85,
-                                            decoration: BoxDecoration(
-                                                color: Colors.transparent,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                      blurRadius: 6,
-                                                      color: Color.fromARGB(
-                                                          95, 0, 0, 0),
-                                                      spreadRadius: 6)
-                                                ]),
-                                            child: TinderLikeCard(
-                                                color: imagelist[0])),
-                                      ),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.transparent,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                  blurRadius: 6,
-                                                  color: Color.fromARGB(
-                                                      95, 0, 0, 0),
-                                                  spreadRadius: 4)
-                                            ]),
-                                        child: ClipRRect(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(20)),
-                                          child: Container(
-                                            color: Colors.white,
-                                            height: 80,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.85,
-                                            child: Row(children: [
-                                              SizedBox(
-                                                width: 40,
-                                              ),
-                                              RatingBar.builder(
-                                                initialRating: 0,
-                                                direction: Axis.horizontal,
-                                                itemCount: 5,
-                                                itemPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 4.0),
-                                                itemBuilder: (context, index) {
-                                                  switch (index) {
-                                                    case 0:
-                                                      return Icon(
-                                                        Icons
-                                                            .sentiment_very_dissatisfied,
-                                                        color: Colors.red,
-                                                      );
-                                                    case 1:
-                                                      return Icon(
-                                                        Icons
-                                                            .sentiment_dissatisfied,
-                                                        color: Colors.redAccent,
-                                                      );
-                                                    case 2:
-                                                      return Icon(
-                                                        Icons.sentiment_neutral,
-                                                        color: Colors.amber,
-                                                      );
-                                                    case 3:
-                                                      return Icon(
-                                                        Icons
-                                                            .sentiment_satisfied,
-                                                        color:
-                                                            Colors.lightGreen,
-                                                      );
-                                                    case 4:
-                                                      return Icon(
-                                                        Icons
-                                                            .sentiment_very_satisfied,
-                                                        color: Colors.green,
-                                                      );
-                                                    default:
-                                                      return Container();
-                                                  }
-                                                },
-                                                onRatingUpdate: (rating) {
-                                                  setparticulaarfalse('2');
-                                                  setState(() {
-                                                    _rating = rating;
-                                                  });
-                                                },
-                                                updateOnDrag: true,
-                                              )
-                                            ]),
-                                          ),
-                                        ),
-                                      )
-                                    ],
-                                  ))
-                              : Container(),
-                        ]),
-                      )
-                    ],
-                  )
-                ],
+                children: [],
               ))),
     );
   }
