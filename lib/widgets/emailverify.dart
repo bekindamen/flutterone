@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -80,112 +82,90 @@ class _VerifyEmailState extends State<VerifyEmail> {
 
   @override
   Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                            blurRadius: 20,
-                            color: Color.fromARGB(215, 188, 137, 206),
-                            spreadRadius: 7)
-                      ],
-                    ),
-                    child: CircleAvatar(
-                      backgroundColor: Colors.transparent,
-                      radius: 20,
-                      backgroundImage: Image.network(
-                              'https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54492.jpg?w=900&t=st=1668051847~exp=1668052447~hmac=e157c49cdd2e533933f2549e41b7d4e9b3ea5e6640c5ee8be540e6e805186663')
-                          .image,
-                    ),
-                  )
-                ],
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 24, 1, 1),
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                        blurRadius: 10,
-                        color: Color.fromARGB(255, 182, 144, 181),
-                        spreadRadius: 5)
+    return Container(
+      child: Align(
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                              blurRadius: 20,
+                              color: Color.fromARGB(215, 188, 137, 206),
+                              spreadRadius: 7)
+                        ],
+                      ),
+                      child: CircleAvatar(
+                        backgroundColor: Colors.transparent,
+                        radius: 20,
+                        backgroundImage: Image.network(
+                                'https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54492.jpg?w=900&t=st=1668051847~exp=1668052447~hmac=e157c49cdd2e533933f2549e41b7d4e9b3ea5e6640c5ee8be540e6e805186663')
+                            .image,
+                      ),
+                    )
                   ],
                 ),
-                child: CircleAvatar(
-                  backgroundColor: Colors.transparent,
-                  radius: 50,
-                  backgroundImage: Image.network(
-                          'https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54492.jpg?w=900&t=st=1668051847~exp=1668052447~hmac=e157c49cdd2e533933f2549e41b7d4e9b3ea5e6640c5ee8be540e6e805186663')
-                      .image,
-                ),
-              )
-            ],
-          ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                    blurRadius: 10,
-                    color: Color.fromARGB(255, 190, 152, 196),
-                    spreadRadius: 10)
+                Container(
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 24, 1, 1),
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                          blurRadius: 10,
+                          color: Color.fromARGB(255, 182, 144, 181),
+                          spreadRadius: 5)
+                    ],
+                  ),
+                  child: CircleAvatar(
+                    backgroundColor: Colors.transparent,
+                    radius: 50,
+                    backgroundImage: Image.network(
+                            'https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54492.jpg?w=900&t=st=1668051847~exp=1668052447~hmac=e157c49cdd2e533933f2549e41b7d4e9b3ea5e6640c5ee8be540e6e805186663')
+                        .image,
+                  ),
+                )
               ],
             ),
-            child: CircleAvatar(
-              backgroundColor: Colors.transparent,
-              radius: 190,
-              backgroundImage: Image.network(
-                      'https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54492.jpg?w=900&t=st=1668051847~exp=1668052447~hmac=e157c49cdd2e533933f2549e41b7d4e9b3ea5e6640c5ee8be540e6e805186663')
-                  .image,
-              child: Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                          decoration: BoxDecoration(
-                            color: Color.fromARGB(96, 255, 255, 255),
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 20,
-                                  color: Color.fromARGB(255, 190, 152, 196),
-                                  spreadRadius: 10)
-                            ],
-                          ),
-                          child: CircleAvatar(
-                            radius: 50,
-                            backgroundColor: Color.fromARGB(96, 255, 255, 255),
-                          )),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Column(
-                        children: [
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Container(
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                      blurRadius: 10,
+                      color: Color.fromARGB(255, 190, 152, 196),
+                      spreadRadius: 10)
+                ],
+              ),
+              child: CircleAvatar(
+                backgroundColor: Colors.transparent,
+                radius: 190,
+                backgroundImage: Image.network(
+                        'https://img.freepik.com/free-photo/studio-background-concept-abstract-empty-light-gradient-purple-studio-room-background-product-plain-studio-background_1258-54492.jpg?w=900&t=st=1668051847~exp=1668052447~hmac=e157c49cdd2e533933f2549e41b7d4e9b3ea5e6640c5ee8be540e6e805186663')
+                    .image,
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
                             decoration: BoxDecoration(
                               color: Color.fromARGB(96, 255, 255, 255),
                               shape: BoxShape.circle,
@@ -197,94 +177,119 @@ class _VerifyEmailState extends State<VerifyEmail> {
                               ],
                             ),
                             child: CircleAvatar(
-                              radius: 30,
+                              radius: 50,
                               backgroundColor:
                                   Color.fromARGB(96, 255, 255, 255),
+                            )),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 20,
                             ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(
-                        width: 5,
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Color.fromARGB(96, 255, 255, 255),
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 10,
-                                    color: Color.fromARGB(255, 190, 152, 196),
-                                    spreadRadius: 10)
-                              ],
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(96, 255, 255, 255),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 20,
+                                      color: Color.fromARGB(255, 190, 152, 196),
+                                      spreadRadius: 10)
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 30,
+                                backgroundColor:
+                                    Color.fromARGB(96, 255, 255, 255),
+                              ),
                             ),
-                            child: CircleAvatar(
-                              radius: 15,
-                              backgroundColor:
-                                  Color.fromARGB(96, 255, 255, 255),
+                          ],
+                        ),
+                        const SizedBox(
+                          width: 5,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(96, 255, 255, 255),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 10,
+                                      color: Color.fromARGB(255, 190, 152, 196),
+                                      spreadRadius: 10)
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 15,
+                                backgroundColor:
+                                    Color.fromARGB(96, 255, 255, 255),
+                              ),
                             ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          )
-                        ],
-                      )
-                    ],
-                  ),
-                  Container(
-                    height: 100,
-                    width: 300,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: Color.fromARGB(96, 255, 255, 255),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color.fromARGB(255, 240, 227, 227)
-                                .withOpacity(0.5),
-                            spreadRadius: 5,
-                            blurRadius: 7,
-                            offset: Offset(0, 3),
-                          )
-                        ]),
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Verify you Email.',
-                      style: TextStyle(
-                        fontSize: 30,
-                        shadows: <Shadow>[
-                          Shadow(
-                            blurRadius: 3.0,
-                            color: Color.fromARGB(255, 93, 68, 68),
-                          ),
-                          Shadow(
-                            blurRadius: 8.0,
-                            color: Color.fromARGB(123, 255, 255, 255),
-                          ),
-                        ],
+                            SizedBox(
+                              height: 20,
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                    Container(
+                      height: 100,
+                      width: 300,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Color.fromARGB(96, 255, 255, 255),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color.fromARGB(255, 240, 227, 227)
+                                  .withOpacity(0.5),
+                              spreadRadius: 5,
+                              blurRadius: 7,
+                              offset: Offset(0, 3),
+                            )
+                          ]),
+                      alignment: Alignment.center,
+                      child: const Text(
+                        'Verify you Email.',
+                        style: TextStyle(
+                          fontSize: 30,
+                          shadows: <Shadow>[
+                            Shadow(
+                              blurRadius: 3.0,
+                              color: Color.fromARGB(255, 93, 68, 68),
+                            ),
+                            Shadow(
+                              blurRadius: 8.0,
+                              color: Color.fromARGB(123, 255, 255, 255),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  TextButton(
-                      onPressed: resendEmail,
-                      child: Text(
-                        'Resend email for verification',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w300,
-                            color: Colors.black26),
-                      )),
-                ],
+                    SizedBox(
+                      height: 30,
+                    ),
+                    TextButton(
+                        onPressed: resendEmail,
+                        child: Text(
+                          'Resend email for verification',
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w300,
+                              color: Colors.black26),
+                        )),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

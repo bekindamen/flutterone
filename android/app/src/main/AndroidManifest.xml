@@ -4,7 +4,12 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         <uses-permission android:name="android.permission.INTERNET"/> 
-        
+        <meta-data
+    android:name="firebase_messaging_auto_init_enabled"
+    android:value="true" />
+<meta-data
+    android:name="firebase_analytics_collection_enabled"
+    android:value="true" />
    <application
         android:label="Bubble"
         android:name="${applicationName}"

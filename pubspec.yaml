@@ -55,8 +55,10 @@ dependencies:
   swipe_cards: ^1.0.0
   http: ^0.13.5
   flutter_tindercard: ^0.2.0
-    
-
+  url_launcher: ^6.1.7
+  firebase_analytics: ^10.0.7
+  firebase_crashlytics: ^3.0.7
+   
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -94,7 +96,7 @@ flutter:
   fonts:
     - family: Cedric
       fonts:
-        - asset: assets\google_fonts\CedarvilleCursive-Regular.ttf
+        - asset: assets\google_fonts\Helvetica.ttf
           weight: 700
   # To add assets to your application, add an assets section, like this:
   # assets:

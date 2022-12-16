@@ -31,7 +31,7 @@ class AvatarState extends State<Avatar> {
         : null;
     cropimg = await ImageCropper.platform.cropImage(
         sourcePath: pickedImageFile!.path,
-        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1.6),
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
         compressQuality: 100,
         maxHeight: 700,
         maxWidth: 500,

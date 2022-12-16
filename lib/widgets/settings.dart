@@ -5,23 +5,27 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 
-class Settings extends StatefulWidget {
-  const Settings({super.key});
+class MySettings extends StatefulWidget {
+  const MySettings({super.key});
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<MySettings> createState() => _MySettingsState();
 }
 
-class _SettingsState extends State<Settings> {
+class _MySettingsState extends State<MySettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        extendBodyBehindAppBar: true,
         appBar: AppBar(
             backgroundColor: Colors.transparent,
             shadowColor: Colors.transparent,
             title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.17,
+                ),
                 const GlowText(
                   'Settings',
                   style: TextStyle(
@@ -38,6 +42,13 @@ class _SettingsState extends State<Settings> {
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           alignment: Alignment.center,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 50,
+              ),
+            ],
+          ),
         ));
   }
 }
