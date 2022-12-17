@@ -195,8 +195,25 @@ class _MainscreenState extends State<Mainscreen> {
                       ),
                     );
                   },
-                  leading: Icon(Icons.settings),
-                  title: Text('Settings'),
+                  leading: Icon(
+                    Icons.settings,
+                    color: Color.fromARGB(146, 255, 255, 255),
+                  ),
+                  title: Text(
+                    'Settings',
+                    style: TextStyle(
+                        color: Color.fromARGB(255, 46, 210, 255),
+                        fontSize: 15,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black,
+                            blurRadius: 50,
+                          ),
+                          Shadow(color: Colors.grey, blurRadius: 5),
+                          Shadow(color: Colors.pink, blurRadius: 5),
+                          Shadow(color: Colors.blue, blurRadius: 5),
+                        ]),
+                  ),
                 ),
                 ListTile(
                   onTap: () {
@@ -214,11 +231,28 @@ class _MainscreenState extends State<Mainscreen> {
                       ),
                     );
                   },
-                  leading: Icon(Icons.settings),
+                  leading: Icon(
+                    Icons.settings,
+                    color: Color.fromARGB(153, 255, 255, 255),
+                  ),
                   title: Stack(
                     alignment: Alignment.center,
                     children: [
-                      Text('Download latest version'),
+                      Text(
+                        'Download latest version',
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 46, 210, 255),
+                            fontSize: 15,
+                            shadows: [
+                              Shadow(
+                                color: Colors.black,
+                                blurRadius: 50,
+                              ),
+                              Shadow(color: Colors.grey, blurRadius: 5),
+                              Shadow(color: Colors.pink, blurRadius: 5),
+                              Shadow(color: Colors.blue, blurRadius: 5),
+                            ]),
+                      ),
                       Positioned(
                         top: 0,
                         right: 0,
@@ -242,12 +276,20 @@ class _MainscreenState extends State<Mainscreen> {
               ],
             ),
             ListTile(
-              leading: Icon(Icons.logout),
+              leading: Icon(
+                Icons.logout,
+                color: Colors.grey,
+              ),
               title: Container(
                 child: const Text(
                   'Sign Out',
                   selectionColor: Colors.pink,
-                  style: TextStyle(fontSize: 15),
+                  style: TextStyle(fontSize: 18, color: Colors.grey, shadows: [
+                    Shadow(color: Colors.black, blurRadius: 6),
+                    Shadow(color: Colors.grey, blurRadius: 2),
+                    Shadow(color: Colors.pink, blurRadius: 4),
+                    Shadow(color: Colors.blue, blurRadius: 5),
+                  ]),
                 ),
               ),
               onTap: () {

@@ -1,11 +1,18 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, prefer_interpolation_to_compose_strings
 
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterone/widgets/samlls/ImageBuilder.dart';
+import 'package:uuid/uuid.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_glow/flutter_glow.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutterone/widgets/loginavatar.dart';
 
 class AddImgScreen extends StatefulWidget {
@@ -17,11 +24,97 @@ class AddImgScreen extends StatefulWidget {
 
 class _AddImgScreenState extends State<AddImgScreen> {
   bool _buttonClicked = false;
-
   @override
   void initState() {
     super.initState();
+    setState(() {
+      AvatarState.imagepicked = false;
+      AvatarState.pickedImage = null;
+    });
   }
+
+  String genuuid() {
+    final uuid = Uuid();
+    return uuid.v4();
+  }
+
+  List<String> mylist = [];
+  getlinks() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    var res = await http
+        .get(Uri.parse('http://54.234.140.51:8000/api/personaldata/' + uid));
+    Map<String, dynamic> map = jsonDecode(res.body.toString());
+    List<dynamic> images = map['data']['images'];
+    for (var image in images) {
+      mylist.add(image['link']);
+    }
+  }
+
+  bool loading = false;
+  Future<void> submit() async {
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    File imagePicked = File((AvatarState.pickedImage)!.path);
+    var uuid = genuuid();
+    setState(() {
+      loading = true;
+    });
+    String imgurl = '';
+    try {
+      final ref = FirebaseStorage.instance.ref().child(uuid + '.jpg');
+      await ref.putFile(imagePicked);
+      imgurl = await ref.getDownloadURL();
+      Map<String, String> bodydata = <String, String>{
+        '_id': uuid,
+        'user_id': uid,
+        'ref_id': imgurl
+      };
+      var push = await http.get(Uri.parse('http://54.234.140.51:8082'));
+
+      Map<String, Map<String, Map<String, String>>> bodydata1 =
+          <String, Map<String, Map<String, String>>>{
+        push.body.toString(): {
+          "images": {"link": imgurl}
+        }
+      };
+      var res1 = await http.put(
+        Uri.parse('http://54.234.140.51:8000/api/personaldata/' + uid),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bodydata1),
+      );
+
+      print(res1.body);
+      var res = await http.post(
+        Uri.parse('http://54.234.140.51:8000/api/imagelinks/'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bodydata),
+      );
+      setState(() {
+        AvatarState.imagepicked = false;
+        AvatarState.pickedImage = null;
+        loading = false;
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  bool trueornot = false;
+  Stream<bool> fuckstream() async* {
+    while (true) {
+      try {
+        setState(() {
+          trueornot = AvatarState.imagepicked;
+        });
+      } catch (error) {}
+      await Future.delayed(Duration(milliseconds: 500));
+    }
+  }
+
+  bool openavatar = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,9 +185,9 @@ class _AddImgScreenState extends State<AddImgScreen> {
                               .then((value) {
                             setState(() {
                               _buttonClicked = !_buttonClicked;
+                              openavatar = !openavatar;
                             });
                           });
-                          Avatar();
                         },
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(8),
@@ -120,6 +213,78 @@ class _AddImgScreenState extends State<AddImgScreen> {
                   ),
                 )
               ],
+            ),
+            SizedBox(
+              height: 50,
+            ),
+            !loading
+                ? openavatar
+                    ? Avatar(
+                        boxShape: BoxShape.rectangle,
+                      )
+                    : Container()
+                : Container(
+                    height: 30,
+                    width: 30,
+                    child: CircularProgressIndicator(),
+                  ),
+            StreamBuilder(
+                stream: Future.value(AvatarState.imagepicked).asStream(),
+                builder: (con, snap) {
+                  fuckstream().listen((enabled) {});
+
+                  if (AvatarState.imagepicked) {
+                    return ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Color.fromARGB(255, 171, 83, 149),
+                        textStyle:
+                            TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                        backgroundColor: Color.fromARGB(255, 229, 33, 243),
+                        splashFactory: InkRipple.splashFactory,
+                        foregroundColor: Color.fromARGB(255, 0, 0, 0),
+                        elevation: 5,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      ),
+                      child: Text('Submit'),
+                      onPressed: () {
+                        submit();
+                      },
+                    );
+                  }
+                  return Container();
+                }),
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 30,
+                ),
+                Text(
+                  'Your Images: ',
+                  style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.w600),
+                ),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Container(
+              height: 400,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: FutureBuilder(
+                  future: getlinks(),
+                  builder: (con, con2) {
+                    return ImageBuilder(list: mylist);
+                  }),
             )
           ]),
         ));

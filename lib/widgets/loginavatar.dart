@@ -5,7 +5,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Avatar extends StatefulWidget {
-  const Avatar({super.key});
+  BoxShape boxShape;
+  Avatar({super.key, required this.boxShape});
 
   @override
   State<Avatar> createState() => AvatarState();
@@ -29,9 +30,15 @@ class AvatarState extends State<Avatar> {
             inProcess = true;
           })
         : null;
+    double yRatio;
+    if (widget.boxShape == BoxShape.circle)
+      yRatio = 1;
+    else
+      yRatio = 1.6;
+
     cropimg = await ImageCropper.platform.cropImage(
         sourcePath: pickedImageFile!.path,
-        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: 1),
+        aspectRatio: CropAspectRatio(ratioX: 1, ratioY: yRatio),
         compressQuality: 100,
         maxHeight: 700,
         maxWidth: 500,
@@ -56,32 +63,52 @@ class AvatarState extends State<Avatar> {
       ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Please select a valid image or try again.')));
     }
-    pickedImage != null ? imagepicked = true : null;
+    setState(() {
+      pickedImage != null ? imagepicked = true : null;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        if (inProcess)
-          Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.black54,
-            child: Container(
-              alignment: Alignment.center,
+        if (widget.boxShape != BoxShape.rectangle)
+          if (inProcess)
+            Container(
+              height: widget.boxShape == BoxShape.circle
+                  ? MediaQuery.of(context).size.height
+                  : MediaQuery.of(context).size.height * 0.3,
+              width: MediaQuery.of(context).size.width,
               color: Colors.black54,
-              height: 40,
-              width: 40,
-              child: const CircularProgressIndicator(),
+              child: Container(
+                alignment: Alignment.center,
+                color: Colors.black54,
+                height: 40,
+                width: 40,
+                child: const CircularProgressIndicator(),
+              ),
             ),
-          ),
-        CircleAvatar(
-          backgroundColor: Colors.grey,
-          backgroundImage:
-              pickedImage != null ? FileImage(File(pickedImage!.path)) : null,
-          radius: 40,
-        ),
+        widget.boxShape == BoxShape.rectangle
+            ? Container(
+                height: 160,
+                width: 100,
+                decoration: BoxDecoration(
+                  color: Colors.grey,
+                  shape: BoxShape.rectangle,
+                  image: DecorationImage(
+                    image: pickedImage != null
+                        ? Image(image: FileImage(File(pickedImage!.path))).image
+                        : Image.asset('res/no-profile-picture-icon.png').image,
+                  ),
+                ),
+              )
+            : CircleAvatar(
+                backgroundColor: Colors.grey,
+                radius: 35,
+                backgroundImage: pickedImage != null
+                    ? Image(image: FileImage(File(pickedImage!.path))).image
+                    : Image.asset('res/no-profile-picture-icon.png').image,
+              ),
         TextButton.icon(
           label: Text('Add the image'),
           icon: Icon(Icons.image_rounded),

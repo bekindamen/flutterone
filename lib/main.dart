@@ -41,6 +41,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
             fontFamily: 'Cedric', backgroundColor: Colors.transparent),
         home: Scaffold(
+          resizeToAvoidBottomInset: false,
           extendBodyBehindAppBar: true,
           appBar: !tomain
               ? AppBar(

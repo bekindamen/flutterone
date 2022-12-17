@@ -29,7 +29,7 @@ class _LoginState extends State<Login> {
   var logIn = true;
   bool loading = false;
   String email = '';
-  String phone = '';
+  String age = '';
   String password = '';
   bool emailVerify = false;
 
@@ -60,7 +60,7 @@ class _LoginState extends State<Login> {
         FirebaseFirestore.instance
             .collection('users')
             .doc(userCredential.user!.uid)
-            .set({'phone': phone, 'dpUrl': dpurl});
+            .set({'age': age, 'dpUrl': dpurl});
 
         final response = await http.post(
           Uri.parse('http://54.234.140.51:8000/api/personalData/'),
@@ -69,7 +69,7 @@ class _LoginState extends State<Login> {
           },
           body: jsonEncode(<String, dynamic>{
             '_id': userCredential.user!.uid,
-            'phone': phone,
+            'age': age,
             'email': FirebaseAuth.instance.currentUser!.email,
             'emailVerified': false,
           }),
@@ -140,6 +140,107 @@ class _LoginState extends State<Login> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
+        Center(
+          child: Card(
+            margin: const EdgeInsets.all(20),
+            child: SingleChildScrollView(
+                child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      if (!logIn)
+                        Avatar(
+                          boxShape: BoxShape.circle,
+                        ),
+                      if (loading)
+                        Container(
+                          height: 40,
+                          width: 40,
+                          child: CircularProgressIndicator(),
+                        ),
+                      TextFormField(
+                        key: const ValueKey('email'),
+                        validator: (value) => value.toString().contains('@')
+                            ? null
+                            : 'Invalid email number',
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        keyboardType: TextInputType.emailAddress,
+                        decoration:
+                            const InputDecoration(labelText: 'Email address'),
+                        obscureText: false,
+                        onSaved: (value) => email = value.toString(),
+                      ),
+                      TextFormField(
+                        key: const ValueKey('password'),
+                        validator: (value) => value.toString().length < 8 ||
+                                RegExp(r"^[a-zA-Z0-9]+$")
+                                    .hasMatch(value.toString())
+                            ? 'Password must be atleast 8 characters and include \nnumber and upper and lower case letters'
+                            : null,
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w400,
+                        ),
+                        keyboardType: TextInputType.visiblePassword,
+                        decoration:
+                            const InputDecoration(labelText: 'Password'),
+                        obscureText: true,
+                        onSaved: (value) => password = value.toString(),
+                      ),
+                      const SizedBox(height: 12),
+                      if (!logIn)
+                        TextFormField(
+                          key: const ValueKey('phone'),
+                          validator: (value) =>
+                              value.toString().trim().length != 10
+                                  ? 'Invalid phone number (don\'t include +91).'
+                                  : null,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w400,
+                          ),
+                          keyboardType: TextInputType.visiblePassword,
+                          decoration: const InputDecoration(labelText: 'Age'),
+                          obscureText: false,
+                          onSaved: (value) => age = value.toString(),
+                        ),
+                      const SizedBox(height: 12),
+                      GlowButton(
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              FocusScope.of(context).unfocus();
+                              _formKey.currentState!.save();
+                              logIn ? signIn() : signUp();
+                            }
+                          },
+                          child: Text(logIn ? 'Sign in' : 'Sign up')),
+                      const SizedBox(height: 12),
+                      TextButton(
+                          onPressed: () {
+                            setState(() {
+                              logIn = !logIn;
+                            });
+                          },
+                          child: Text(logIn
+                              ? 'Create new account'
+                              : 'I already have an account')),
+                      logIn
+                          ? TextButton(
+                              onPressed: resetpass,
+                              child: Text('Forgot password!'))
+                          : Container(),
+                      emailVerify ? VerifyEmail() : Container(),
+                    ],
+                  )),
+            )),
+          ),
+        ),
         Column(
           children: [
             Column(
@@ -231,105 +332,6 @@ class _LoginState extends State<Login> {
               ],
             ),
           ],
-        ),
-        Center(
-          child: Card(
-            margin: const EdgeInsets.all(20),
-            child: SingleChildScrollView(
-                child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Form(
-                  key: _formKey,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      if (!logIn) Avatar(),
-                      if (loading)
-                        Container(
-                          height: 40,
-                          width: 40,
-                          child: CircularProgressIndicator(),
-                        ),
-                      TextFormField(
-                        key: const ValueKey('email'),
-                        validator: (value) => value.toString().contains('@')
-                            ? null
-                            : 'Invalid email number',
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        keyboardType: TextInputType.emailAddress,
-                        decoration:
-                            const InputDecoration(labelText: 'Email address'),
-                        obscureText: false,
-                        onSaved: (value) => email = value.toString(),
-                      ),
-                      TextFormField(
-                        key: const ValueKey('password'),
-                        validator: (value) => value.toString().length < 8 ||
-                                RegExp(r"^[a-zA-Z0-9]+$")
-                                    .hasMatch(value.toString())
-                            ? 'Password must be atleast 8 characters and include \nnumber and upper and lower case letters'
-                            : null,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w400,
-                        ),
-                        keyboardType: TextInputType.visiblePassword,
-                        decoration:
-                            const InputDecoration(labelText: 'Password'),
-                        obscureText: true,
-                        onSaved: (value) => password = value.toString(),
-                      ),
-                      const SizedBox(height: 12),
-                      if (!logIn)
-                        TextFormField(
-                          key: const ValueKey('phone'),
-                          validator: (value) =>
-                              value.toString().trim().length != 10
-                                  ? 'Invalid phone number (don\'t include +91).'
-                                  : null,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400,
-                          ),
-                          keyboardType: TextInputType.visiblePassword,
-                          decoration:
-                              const InputDecoration(labelText: 'Phone number'),
-                          obscureText: false,
-                          onSaved: (value) => phone = value.toString(),
-                        ),
-                      const SizedBox(height: 12),
-                      GlowButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              FocusScope.of(context).unfocus();
-                              _formKey.currentState!.save();
-                              logIn ? signIn() : signUp();
-                            }
-                          },
-                          child: Text(logIn ? 'Sign in' : 'Sign up')),
-                      const SizedBox(height: 12),
-                      TextButton(
-                          onPressed: () {
-                            setState(() {
-                              logIn = !logIn;
-                            });
-                          },
-                          child: Text(logIn
-                              ? 'Create new account'
-                              : 'I already have an account')),
-                      logIn
-                          ? TextButton(
-                              onPressed: resetpass,
-                              child: Text('Forgot password!'))
-                          : Container(),
-                      emailVerify ? VerifyEmail() : Container(),
-                    ],
-                  )),
-            )),
-          ),
         ),
       ],
     );
