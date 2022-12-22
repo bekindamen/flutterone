@@ -55,6 +55,7 @@ class MyApp extends StatelessWidget {
                       const GlowText(
                         'Bubble',
                         style: TextStyle(
+                          fontWeight: FontWeight.w700,
                             fontSize: 38,
                             color: Color.fromRGBO(255, 192, 245, 1)),
                       ),

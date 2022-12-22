@@ -1,7 +1,10 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, unnecessary_const, prefer_const_literals_to_create_immutables, curly_braces_in_flow_control_structures
 
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutterone/widgets/addimgscreen.dart';
 import 'package:flutterone/widgets/dnlv.dart';
+import 'package:flutterone/widgets/samlls/open.dart';
 import 'package:flutterone/widgets/settings.dart' as myset;
 import 'package:http/http.dart' as http;
 
@@ -53,8 +57,72 @@ class _MainscreenState extends State<Mainscreen> {
   bool urlgot = true;
   var scaffoldKey = GlobalKey<ScaffoldState>();
   String pp = '';
-  String? fcmToken = '';
   bool isDA = false;
+  String? age;
+  
+
+  getlinkbyage() async {
+    var resage = await http.get(Uri.parse('http://54.234.140.51:800/api/personaldata'));
+    Map<String, dynamic> mapage = jsonDecode(resage.body.toString());
+    String age = mapage['data']['age'].toString();
+    print(age);
+        var res3 = await http.get(
+      Uri.parse('http://54.234.140.51:8000/api/ages/21' ),
+    );
+   
+     Map<String, dynamic> map = jsonDecode(res3.body.toString()); 
+     
+     List<dynamic> map2 = map['data']['images'];
+     map2.forEach((e) {
+       var map4 = jsonEncode(e);
+       var map3 = jsonDecode(map4);
+        String id = map3['_id'];
+        String link = map3['link'];
+widlist.add(GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => Opened(
+                url: link, id: id,
+              ),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return CupertinoPageTransition(
+                  linearTransition: true,
+                  primaryRouteAnimation: animation,
+                  secondaryRouteAnimation: secondaryAnimation,
+                  child: child,
+                );
+              },
+            ));
+      },
+      child: Padding(
+        padding: EdgeInsets.all(13),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: Card(
+            shadowColor: Colors.black,
+            elevation: 10,
+            color: Color.fromARGB(99, 0, 0, 0),
+            child: Hero(
+              tag: link,
+              child: Image(image: Image.network(link).image),
+            ),
+          ),
+        ),
+      ),
+    ));
+     });
+      }
+
+   
+
+  List<Widget> widlist = [
+   
+     
+  ];
+
   Future<String> geturl() async {
     var resp =
         await http.get(Uri.parse('http://54.234.140.51:8000/api/constatus/2'));
@@ -65,7 +133,6 @@ class _MainscreenState extends State<Mainscreen> {
     FirebaseMessaging messaging = await FirebaseMessaging.instance;
 
     await FirebaseMessaging.instance.subscribeToTopic("downloadupdate");
-    fcmToken = await FirebaseMessaging.instance.getToken();
 
     final dpUrl = FirebaseFirestore.instance
         .collection('users')
@@ -87,23 +154,12 @@ class _MainscreenState extends State<Mainscreen> {
     return 'error';
   }
 
-  double _rating = 0;
-
-  // setparticulaarfalse(String code) {
-  //   setState(() {
-  //     if (code.contains('2')) {
-  //       temp2 = false;
-  //       temp1 = true;
-  //     }
-  //     if (code.contains('1')) {
-  //       temp1 = false;
-  //       temp2 = true;
-  //     }
-  //   });
-  // }
+  late PageController _pageController;
+  int cuur = 0;
 
   @override
   void initState() {
+
     FirebaseMessaging.onMessage.listen((event) {});
 
     FirebaseMessaging.onMessageOpenedApp.listen((event) {
@@ -119,9 +175,61 @@ class _MainscreenState extends State<Mainscreen> {
         ),
       );
     });
-
+  widlist = [];
     super.initState();
+    getlinkbyage();
+    _pageController = PageController(initialPage: cuur, viewportFraction: 0.8);
+ 
+    widlist.add(GestureDetector(
+      
+      onTap: () {
+        Navigator.push(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (context, animation, secondaryAnimation) => Opened(
+                url: 'https://firebasestorage.googleapis.com/v0/b/light-house-219ea.appspot.com/o/happrbubbling.png?alt=media&token=1886f19c-4441-49f9-98d9-47a0b96ceef6', id: 'welcome',
+              ),
+              transitionsBuilder:
+                  (context, animation, secondaryAnimation, child) {
+                return CupertinoPageTransition(
+                  linearTransition: true,
+                  primaryRouteAnimation: animation,
+                  secondaryRouteAnimation: secondaryAnimation,
+                  child: child,
+                );
+              },
+            ));
+      },
+      child: Padding(
+        padding: EdgeInsets.all(13),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(30),
+          child: Card(
+            shadowColor: Colors.black,
+            elevation: 10,
+            color: Color.fromARGB(99, 0, 0, 0),
+            child: Hero(
+              tag: 'https://firebasestorage.googleapis.com/v0/b/light-house-219ea.appspot.com/o/happrbubbling.png?alt=media&token=1886f19c-4441-49f9-98d9-47a0b96ceef6',
+              child: Image(image: Image.network('https://firebasestorage.googleapis.com/v0/b/light-house-219ea.appspot.com/o/happrbubbling.png?alt=media&token=1886f19c-4441-49f9-98d9-47a0b96ceef6').image),
+            ),
+          ),
+        ),
+      ),
+    ));
+
+    
   }
+
+
+  @override
+  void dispose(){
+    
+    _pageController.dispose();
+    super.dispose();
+
+  }
+
+  
 
   @override
   Widget build(BuildContext context) {
@@ -366,7 +474,31 @@ class _MainscreenState extends State<Mainscreen> {
                             )),
                       ),
                     ],
-                  )
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  AspectRatio(
+                    aspectRatio: (300 / 367),
+                    child: PageView.builder(
+                        itemCount: widlist.length,
+                        physics: const ClampingScrollPhysics(),
+                        controller: _pageController,
+                        itemBuilder: (context, index) {
+                          return AnimatedBuilder(
+        animation: _pageController,
+        builder: (context, child) {
+          double value = 0.0;
+          if (_pageController.position.haveDimensions) {
+            value = index.toDouble() - (_pageController.page ?? 0);
+            value = (value * 0.038).clamp(-1, 1);
+          }
+          return Transform.rotate(
+              angle: (22 / 7) * value, child: widlist[index]);
+        });
+                        }),
+                  ),
+                  TextButton(child: Text('data'), onPressed: getlinkbyage,)
                 ],
               ))),
     );

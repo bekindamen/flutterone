@@ -7,7 +7,7 @@ import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutterone/widgets/samlls/ImageBuilder.dart';
+import 'package:flutterone/widgets/samlls/imagebuilder.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -54,6 +54,7 @@ class _AddImgScreenState extends State<AddImgScreen> {
   Future<void> submit() async {
     String uid = FirebaseAuth.instance.currentUser!.uid;
     File imagePicked = File((AvatarState.pickedImage)!.path);
+
     var uuid = genuuid();
     setState(() {
       loading = true;
