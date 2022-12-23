@@ -58,16 +58,16 @@ class _MainscreenState extends State<Mainscreen> {
   var scaffoldKey = GlobalKey<ScaffoldState>();
   String pp = '';
   bool isDA = false;
-  String? age;
+  int? age;
   
 
   getlinkbyage() async {
-    var resage = await http.get(Uri.parse('http://54.234.140.51:800/api/personaldata'));
+    var resage = await http.get(Uri.parse('http://54.234.140.51:8000/api/personaldata/' + FirebaseAuth.instance.currentUser!.uid));
     Map<String, dynamic> mapage = jsonDecode(resage.body.toString());
-    String age = mapage['data']['age'].toString();
-    print(age);
-        var res3 = await http.get(
-      Uri.parse('http://54.234.140.51:8000/api/ages/21' ),
+     
+       age = int.parse(mapage['data']['age']);
+         var res3 = await http.get(
+      Uri.parse('http://54.234.140.51:8000/api/ages/' + age.toString() ),
     );
    
      Map<String, dynamic> map = jsonDecode(res3.body.toString()); 
@@ -180,39 +180,15 @@ widlist.add(GestureDetector(
     getlinkbyage();
     _pageController = PageController(initialPage: cuur, viewportFraction: 0.8);
  
-    widlist.add(GestureDetector(
-      
-      onTap: () {
-        Navigator.push(
-            context,
-            PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => Opened(
-                url: 'https://firebasestorage.googleapis.com/v0/b/light-house-219ea.appspot.com/o/happrbubbling.png?alt=media&token=1886f19c-4441-49f9-98d9-47a0b96ceef6', id: 'welcome',
-              ),
-              transitionsBuilder:
-                  (context, animation, secondaryAnimation, child) {
-                return CupertinoPageTransition(
-                  linearTransition: true,
-                  primaryRouteAnimation: animation,
-                  secondaryRouteAnimation: secondaryAnimation,
-                  child: child,
-                );
-              },
-            ));
-      },
-      child: Padding(
-        padding: EdgeInsets.all(13),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(30),
-          child: Card(
-            shadowColor: Colors.black,
-            elevation: 10,
-            color: Color.fromARGB(99, 0, 0, 0),
-            child: Hero(
-              tag: 'https://firebasestorage.googleapis.com/v0/b/light-house-219ea.appspot.com/o/happrbubbling.png?alt=media&token=1886f19c-4441-49f9-98d9-47a0b96ceef6',
-              child: Image(image: Image.network('https://firebasestorage.googleapis.com/v0/b/light-house-219ea.appspot.com/o/happrbubbling.png?alt=media&token=1886f19c-4441-49f9-98d9-47a0b96ceef6').image),
-            ),
-          ),
+    widlist.add(Padding(
+      padding: EdgeInsets.all(13),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(30),
+        child: Card(
+          shadowColor: Colors.black,
+          elevation: 10,
+          color: Color.fromARGB(99, 0, 0, 0),
+          child: Image(image: Image.network('https://firebasestorage.googleapis.com/v0/b/light-house-219ea.appspot.com/o/happrbubbling.png?alt=media&token=1886f19c-4441-49f9-98d9-47a0b96ceef6').image),
         ),
       ),
     ));
@@ -443,8 +419,10 @@ widlist.add(GestureDetector(
                                         AddImgScreen(),
                                     transitionsBuilder: (context, animation,
                                         secondaryAnimation, child) {
-                                      return FadeTransition(
-                                        opacity: animation,
+                                      return CupertinoPageTransition(
+                                        primaryRouteAnimation: animation,
+                                        secondaryRouteAnimation: secondaryAnimation,
+                                         linearTransition: true,
                                         child: child,
                                       );
                                     },

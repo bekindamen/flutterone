@@ -18,7 +18,7 @@ class Opened extends StatefulWidget {
 
 class _OpenedState extends State<Opened> {
    
-   String age ='';
+   int age =0;
    String email ='';
  String  dplink = '';
 bool urlgot = false;
@@ -32,20 +32,19 @@ bool urlgot = false;
       if (key == 'dpUrl') {
         setState(() {
           dplink = value.toString();
- 
+
         });
-        return value;
+      
       }
     });
-    setState(() {
+    
+    var res = await http.get(Uri.parse('http://54.234.140.51:8000/api/personaldata/' + FirebaseAuth.instance.currentUser!.uid ));
+    Map<String, dynamic> map = jsonDecode(res.body.toString());
+      age = int.parse(map['data']['age']) ;
+        email = map['data']['email'];
+ setState(() {
       urlgot = true;
     });
-    var res = await http.get(Uri.parse('http://54.234.140.51:8000/api/personaldata'));
-    Map<String, dynamic> map = jsonDecode(res.body.toString());
-      age = map['data']['age'].toString();
-      print(age);
-       email = map['data']['email'];
-
   }
 
 
@@ -57,8 +56,8 @@ bool urlgot = false;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragDown: (details) {
+    return  GestureDetector(
+      onTap: ( ) {
                 Navigator.pop(context);
               },
              
@@ -94,16 +93,16 @@ bool urlgot = false;
                         child: Container(height: 120, width: 75, color: Colors.grey, child:urlgot ? Image(
                             image: Image.network(
                                     dplink)
-                                .image): Container(height: 30, width: 30, child: CircularProgressIndicator()) ,),
+                                .image): Center(child: Container(height: 30, width: 30, child: CircularProgressIndicator())) ,),
                       ),
                    SizedBox(width: 30,),
                         Column(
                           children: [
                             Row(children: [
-                              Text('Email'), urlgot ? Text(email, ): Container(height: 20, width: 20, child: CircularProgressIndicator(),)
+                              Text('Email: '), urlgot ? Text(email, ): Container(height: 10, width: 10, child: CircularProgressIndicator(),)
                               ],),
                               Row(children: [
-                              Text('Age'), urlgot ? Text(age): Container(height: 20, width: 20, child: CircularProgressIndicator(),)
+                              Text('Age: '), urlgot ? Text(age.toString()): Container(height: 10, width: 10, child: CircularProgressIndicator(),)
                               ],),
                           ],
                         )
@@ -115,6 +114,6 @@ bool urlgot = false;
           ),
         ),
       ),
-    );
+    ) ;
   }
 }

@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterone/widgets/samlls/imagebuilder.dart';
+import 'package:flutterone/widgets/samlls/listimages.dart';
 import 'package:uuid/uuid.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
@@ -38,8 +39,9 @@ class _AddImgScreenState extends State<AddImgScreen> {
     return uuid.v4();
   }
 
-  List<String> mylist = [];
-  getlinks() async {
+  Future<List<String>> getlinks() async {
+    List<String> mylist = [];
+
     String uid = FirebaseAuth.instance.currentUser!.uid;
     var res = await http
         .get(Uri.parse('http://54.234.140.51:8000/api/personaldata/' + uid));
@@ -48,6 +50,7 @@ class _AddImgScreenState extends State<AddImgScreen> {
     for (var image in images) {
       mylist.add(image['link']);
     }
+    return mylist;
   }
 
   bool loading = false;
@@ -65,9 +68,8 @@ class _AddImgScreenState extends State<AddImgScreen> {
       await ref.putFile(imagePicked);
       imgurl = await ref.getDownloadURL();
       Map<String, String> bodydata = <String, String>{
-        '_id': uuid,
-        'user_id': uid,
-        'ref_id': imgurl
+        '_id': uid,
+        'link': imgurl
       };
       var push = await http.get(Uri.parse('http://54.234.140.51:8082'));
 
@@ -84,10 +86,14 @@ class _AddImgScreenState extends State<AddImgScreen> {
         },
         body: jsonEncode(bodydata1),
       );
-
+      var resage = await http.get(Uri.parse(
+          'http://54.234.140.51:8000/api/personaldata/' +
+              FirebaseAuth.instance.currentUser!.uid));
+      Map<String, dynamic> map = jsonDecode(resage.body.toString());
+      int age = int.parse(map['data']['age']);
       print(res1.body);
-      var res = await http.post(
-        Uri.parse('http://54.234.140.51:8000/api/imagelinks/'),
+      var res = await http.put(
+        Uri.parse('http://54.234.140.51:8000/api/age/' + age.toString()),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -99,19 +105,9 @@ class _AddImgScreenState extends State<AddImgScreen> {
         loading = false;
       });
     } catch (err) {
-      print(err);
-    }
-  }
-
-  bool trueornot = false;
-  Stream<bool> fuckstream() async* {
-    while (true) {
-      try {
-        setState(() {
-          trueornot = AvatarState.imagepicked;
-        });
-      } catch (error) {}
-      await Future.delayed(Duration(milliseconds: 500));
+      AlertDialog(
+        title: Text(err.toString()),
+      );
     }
   }
 
@@ -232,8 +228,6 @@ class _AddImgScreenState extends State<AddImgScreen> {
             StreamBuilder(
                 stream: Future.value(AvatarState.imagepicked).asStream(),
                 builder: (con, snap) {
-                  fuckstream().listen((enabled) {});
-
                   if (AvatarState.imagepicked) {
                     return ElevatedButton(
                       style: ElevatedButton.styleFrom(
@@ -278,14 +272,11 @@ class _AddImgScreenState extends State<AddImgScreen> {
             SizedBox(
               height: 20,
             ),
-            Container(
-              height: 400,
-              width: MediaQuery.of(context).size.width * 0.8,
-              child: FutureBuilder(
-                  future: getlinks(),
-                  builder: (con, con2) {
-                    return ImageBuilder(list: mylist);
-                  }),
+            FutureBuilder(
+              future: getlinks(),
+              builder: ((context, snapshot) {
+                return ListImages(imageslist: getlinks());
+              }),
             )
           ]),
         ));
