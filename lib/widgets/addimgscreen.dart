@@ -91,7 +91,7 @@ class _AddImgScreenState extends State<AddImgScreen> {
               FirebaseAuth.instance.currentUser!.uid));
       Map<String, dynamic> map = jsonDecode(resage.body.toString());
       int age = int.parse(map['data']['age']);
-      print(res1.body);
+      
       var res = await http.put(
         Uri.parse('http://54.234.140.51:8000/api/age/' + age.toString()),
         headers: <String, String>{
@@ -110,6 +110,7 @@ class _AddImgScreenState extends State<AddImgScreen> {
       );
     }
   }
+   
 
   bool openavatar = false;
 
@@ -140,145 +141,158 @@ class _AddImgScreenState extends State<AddImgScreen> {
             ],
           ),
         ),
-        body: Container(
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.pink, Colors.redAccent],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft)),
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          alignment: Alignment.center,
-          child: Column(children: [
-            SizedBox(
-              height: 130,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: AnimatedContainer(
-                    duration: Duration(milliseconds: 50),
-                    width: _buttonClicked ? 310 : 300,
-                    height: _buttonClicked ? 105 : 100,
-                    decoration: _buttonClicked
-                        ? BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            boxShadow: [
-                              BoxShadow(
-                                  blurRadius: 4,
-                                  color: Colors.pink,
-                                  spreadRadius: 2)
-                            ],
-                          )
-                        : null,
-                    child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            _buttonClicked = !_buttonClicked;
-                          });
-                          Future.delayed(Duration(milliseconds: 100))
-                              .then((value) {
-                            setState(() {
-                              _buttonClicked = !_buttonClicked;
-                              openavatar = !openavatar;
-                            });
-                          });
-                        },
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(8),
-                          child: Container(
-                            margin: EdgeInsets.all(0),
-                            padding: EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                                gradient: LinearGradient(
-                                    colors: [
-                                  Color.fromARGB(159, 0, 0, 0),
-                                  Color.fromARGB(255, 255, 82, 226)
+        body: SingleChildScrollView(
+          child: Container(
+            decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                    colors: [Colors.pink, Colors.redAccent],
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft)),
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            alignment: Alignment.center,
+            child: SingleChildScrollView(
+              child: Column(mainAxisAlignment: MainAxisAlignment.start, crossAxisAlignment: CrossAxisAlignment.start, children: [
+                SizedBox(
+                  height: 130,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 50),
+                        width: _buttonClicked ? 310 : 300,
+                        height: _buttonClicked ? 105 : 100,
+                        decoration: _buttonClicked
+                            ? BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 4,
+                                      color: Colors.pink,
+                                      spreadRadius: 2)
                                 ],
-                                    begin: Alignment.topRight,
-                                    end: Alignment.bottomLeft)),
-                            child: Center(
-                              child: Text(
-                                'Add new image',
-                                style: TextStyle(fontSize: 27),
+                              )
+                            : null,
+                        child: TextButton(
+                            onPressed: () {
+                              setState(() {
+                                _buttonClicked = !_buttonClicked;
+                              });
+                              Future.delayed(Duration(milliseconds: 100))
+                                  .then((value) {
+                                setState(() {
+                                  _buttonClicked = !_buttonClicked;
+                                  openavatar = !openavatar;
+                                });
+                              });
+                            },
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(8),
+                              child: Container(
+                                margin: EdgeInsets.all(0),
+                                padding: EdgeInsets.all(10),
+                                decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [
+                                      Color.fromARGB(159, 0, 0, 0),
+                                      Color.fromARGB(255, 255, 82, 226)
+                                    ],
+                                        begin: Alignment.topRight,
+                                        end: Alignment.bottomLeft)),
+                                child: Center(
+                                  child: Text(
+                                    'Add new image',
+                                    style: TextStyle(fontSize: 27),
+                                  ),
+                                ),
                               ),
+                            )),
+                      ),
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: 50,
+                ),
+                !loading
+                    ? openavatar
+                        ? Center(
+                          child: Avatar(
+                              boxShape: BoxShape.rectangle,
                             ),
+                        )
+                        : Container()
+                    : Container(
+                        height: 30,
+                        width: 30,
+                        child: CircularProgressIndicator(),
+                      ),
+                StreamBuilder(
+                    stream: Future.value(AvatarState.imagepicked).asStream(),
+                    builder: (con, snap) {
+                      if (AvatarState.imagepicked) {
+                        return ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            primary: Color.fromARGB(255, 171, 83, 149),
+                            textStyle:
+                                TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
+                            backgroundColor: Color.fromARGB(255, 229, 33, 243),
+                            splashFactory: InkRipple.splashFactory,
+                            foregroundColor: Color.fromARGB(255, 0, 0, 0),
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            padding:
+                                EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           ),
-                        )),
+                          child: Text('Submit'),
+                          onPressed: () {
+                            submit();
+                          },
+                        );
+                      }
+                      return Container();
+                    }),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      width: 30,
+                    ),
+                    Text(
+                      'Your Images: ',
+                      style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.blueGrey,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20,),
+                Center(
+                  child: FutureBuilder(
+                    future: getlinks(),
+                    builder: ((context, snapshot)  {
+              
+                      while(!snapshot.hasData){
+                        return Center(child: Container(height: 30, width: 30, child: CircularProgressIndicator(),));
+                      } 
+                    
+                      return ListImages(imageslist:   snapshot.data!, height: 240, width: 150,);
+                    }),
                   ),
                 )
-              ],
+              ]),
             ),
-            SizedBox(
-              height: 50,
-            ),
-            !loading
-                ? openavatar
-                    ? Avatar(
-                        boxShape: BoxShape.rectangle,
-                      )
-                    : Container()
-                : Container(
-                    height: 30,
-                    width: 30,
-                    child: CircularProgressIndicator(),
-                  ),
-            StreamBuilder(
-                stream: Future.value(AvatarState.imagepicked).asStream(),
-                builder: (con, snap) {
-                  if (AvatarState.imagepicked) {
-                    return ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Color.fromARGB(255, 171, 83, 149),
-                        textStyle:
-                            TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                        backgroundColor: Color.fromARGB(255, 229, 33, 243),
-                        splashFactory: InkRipple.splashFactory,
-                        foregroundColor: Color.fromARGB(255, 0, 0, 0),
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                      ),
-                      child: Text('Submit'),
-                      onPressed: () {
-                        submit();
-                      },
-                    );
-                  }
-                  return Container();
-                }),
-            SizedBox(
-              height: 20,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 30,
-                ),
-                Text(
-                  'Your Images: ',
-                  style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.blueGrey,
-                      fontWeight: FontWeight.w600),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            FutureBuilder(
-              future: getlinks(),
-              builder: ((context, snapshot) {
-                return ListImages(imageslist: getlinks());
-              }),
-            )
-          ]),
+          ),
         ));
   }
 }
+
+
