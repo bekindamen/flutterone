@@ -2,14 +2,16 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
-
+   import 'dart:io';
+ 
+ import 'package:dio/dio.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterone/widgets/samlls/imagebuilder.dart';
 import 'package:flutterone/widgets/samlls/listimages.dart';
-import 'package:uuid/uuid.dart';
+  import 'package:uuid/uuid.dart';
 import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_glow/flutter_glow.dart';
@@ -53,25 +55,65 @@ class _AddImgScreenState extends State<AddImgScreen> {
     return mylist;
   }
 
+// Stream<bool> getboolstream(Future<bool> mybool )async*{
+//   while (true){
+//     yield await mybool;
+//     Future.delayed(Duration(microseconds: 500));
+//   }
+  
+// }
+
+
   bool loading = false;
   Future<void> submit() async {
-    String uid = FirebaseAuth.instance.currentUser!.uid;
-    File imagePicked = File((AvatarState.pickedImage)!.path);
-
-    var uuid = genuuid();
+    
     setState(() {
       loading = true;
     });
+    String uid = FirebaseAuth.instance.currentUser!.uid;
+    File imagePicked = File((AvatarState.pickedImage)!.path);
+
+var request = await http.MultipartRequest('POST', Uri.parse('http://54.234.140.51:5000/images'));
+request.files.add(await http.MultipartFile.fromPath('image', imagePicked.path));
+
+var response = await request.send();
+
+if (response.statusCode == 200) {
+  String id ='';
+  
+  await  response.stream.bytesToString().then((value) {
+      var json = jsonDecode(value.toString());
+      setState(() {
+        id = json['image_id'];
+      });
+    });
+ 
+
+   
+ var res = await http.get(Uri.parse('https://2h871ys0o2.execute-api.ap-south-1.amazonaws.com/test3/getrekog?objectid=' + id));
+
+ if(res.body.toString().contains('Swimwear') || res.body.toString().contains('Revealing') || res.body.toString().contains('Explicit') || res.body.toString().contains('Nudity') || res.body.toString().contains('Sexual')){
+   ScaffoldMessenger.of(context).showSnackBar(SnackBar(backgroundColor: Colors.transparent,content: ClipRRect(borderRadius: BorderRadius.circular(15), child: Center(child: Container(height: 60, width: MediaQuery.of(context).size.width * 0.8, decoration: BoxDecoration(gradient: LinearGradient(begin: Alignment.bottomLeft, end: Alignment.topRight, colors: [Colors.pink, Colors.pink]), ), child: Text('Do not upload inappropriate photo', style: TextStyle(color: Colors.black, fontSize: 10),),)))));
+   
+ }else{
+ var uuid = genuuid();
+    
     String imgurl = '';
     try {
       final ref = FirebaseStorage.instance.ref().child(uuid + '.jpg');
       await ref.putFile(imagePicked);
+            var push = await http.get(Uri.parse('http://54.234.140.51:8082'));
+
       imgurl = await ref.getDownloadURL();
-      Map<String, String> bodydata = <String, String>{
-        '_id': uid,
-        'link': imgurl
+      print(imgurl);
+       Map<String, Map<String, Map<String, String>>> bodydata =   <String, Map<String, Map<String, String>>>{
+        
+         push.body.toString(): {
+          "images": { "_id": uid,
+                       "link": imgurl}
+        }
+       
       };
-      var push = await http.get(Uri.parse('http://54.234.140.51:8082'));
 
       Map<String, Map<String, Map<String, String>>> bodydata1 =
           <String, Map<String, Map<String, String>>>{
@@ -90,10 +132,10 @@ class _AddImgScreenState extends State<AddImgScreen> {
           'http://54.234.140.51:8000/api/personaldata/' +
               FirebaseAuth.instance.currentUser!.uid));
       Map<String, dynamic> map = jsonDecode(resage.body.toString());
-      int age = int.parse(map['data']['age']);
-      
+      String age = map['data']['age'].toString();
+      print(age);
       var res = await http.put(
-        Uri.parse('http://54.234.140.51:8000/api/age/' + age.toString()),
+        Uri.parse('http://54.234.140.51:8000/api/ages/' + age),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -109,6 +151,37 @@ class _AddImgScreenState extends State<AddImgScreen> {
         title: Text(err.toString()),
       );
     }
+ }
+  setState(() {
+        AvatarState.imagepicked = false;
+        AvatarState.pickedImage = null;
+        loading = false;
+      });
+}
+else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        
+          content: ClipRRect(
+              borderRadius: BorderRadius.circular(15),
+              child: Center(
+                  child: Container(
+                height: 60,
+                width: MediaQuery.of(context).size.width * 0.8,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                      begin: Alignment.bottomLeft,
+                      end: Alignment.topRight,
+                      colors: [Colors.pink, Colors.pink]),
+                ),
+                child: Text(
+                  'Could not uplaod photo',
+                  style: TextStyle(color: Colors.black, fontSize: 10),
+                ),
+              )))));
+
+}
+
+   
   }
    
 
@@ -225,35 +298,42 @@ class _AddImgScreenState extends State<AddImgScreen> {
                             ),
                         )
                         : Container()
-                    : Container(
-                        height: 30,
-                        width: 30,
-                        child: CircularProgressIndicator(),
-                      ),
+                    : Center(
+                      child: Container(
+                          height: 30,
+                          width: 30,
+                          child: CircularProgressIndicator(),
+                        ),
+                    ),
                 StreamBuilder(
                     stream: Future.value(AvatarState.imagepicked).asStream(),
                     builder: (con, snap) {
-                      if (AvatarState.imagepicked) {
-                        return ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            primary: Color.fromARGB(255, 171, 83, 149),
-                            textStyle:
-                                TextStyle(color: Color.fromARGB(255, 0, 0, 0)),
-                            backgroundColor: Color.fromARGB(255, 229, 33, 243),
-                            splashFactory: InkRipple.splashFactory,
-                            foregroundColor: Color.fromARGB(255, 0, 0, 0),
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            padding:
-                                EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          ),
-                          child: Text('Submit'),
-                          onPressed: () {
-                            submit();
+                      
+                            if (AvatarState.imagepicked) {
+                              return Center(
+                                  child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  primary: Color.fromARGB(255, 171, 83, 149),
+                                  textStyle: TextStyle(
+                                      color: Color.fromARGB(255, 0, 0, 0)),
+                                  backgroundColor:
+                                      Color.fromARGB(255, 229, 33, 243),
+                                  splashFactory: InkRipple.splashFactory,
+                                  foregroundColor: Color.fromARGB(255, 0, 0, 0),
+                                  elevation: 5,
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 10),
+                                ),
+                                child: Text('Submit'),
+                                onPressed: () {
+                                  submit();
                           },
-                        );
+                        ));
                       }
+                      
+                     
                       return Container();
                     }),
                 SizedBox(

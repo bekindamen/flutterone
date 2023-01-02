@@ -41,7 +41,7 @@ dependencies:
   flutter_glow: ^0.2.0 
   firebase_auth: ^4.1.1
   firebase_core: ^2.1.1
-   
+  form_data: ^0.0.1
   
   shake: ^2.1.0
   
@@ -59,7 +59,8 @@ dependencies:
   firebase_analytics: ^10.0.7
   firebase_crashlytics: ^3.0.7 
   uuid: ^3.0.7
-  aws_rekognition_api: ^2.0.0
+  dio: ^4.0.6
+  axios: ^1.0.1+1
     
 dev_dependencies:
   flutter_test:
@@ -90,7 +91,10 @@ flutter_native_splash:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    - res/ring_1f48d.png
+    - res/people-hugging_1fac2.png
     - res/no-profile-picture-icon.png
+    - res/kiss-mark_1f48b.png 
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.

@@ -50,6 +50,7 @@ void initState(){
   @override
   Widget build(BuildContext context) {
     return Wrap(
+      verticalDirection: VerticalDirection.up,
       spacing: 16,
       runSpacing: 32,
       children: getImageWidgets(widget.imageslist),

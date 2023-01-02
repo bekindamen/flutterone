@@ -90,6 +90,7 @@ final _controller = ScrollController();
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(30),
                       child: Image(
+                        fit: BoxFit.fill,
                           image: Image.network(
                                   widget.url)
                               .image),

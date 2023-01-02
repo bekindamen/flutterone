@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, unnecessary_const, prefer_const_literals_to_create_immutables, curly_braces_in_flow_control_structures
 
 import 'dart:convert';
-
+ 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -127,10 +127,10 @@ class _MainscreenState extends State<Mainscreen> {
                         color: Color.fromARGB(99, 0, 0, 0),
                         child: Hero(
                           tag: link,
-                          child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image(image: Image.network(link).image)),
+                          child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image( width: MediaQuery.of(context).size.width, fit: BoxFit.fill, image: Image.network(link).image)),
                         ),
                       ),
-                  
+
                     SizedBox(height: 20,),
                     Center(child: ListImages(imageslist: imageslist, height: 360, width: 220,))
                   ],
@@ -234,7 +234,7 @@ class _MainscreenState extends State<Mainscreen> {
       drawer: Drawer(
         elevation: 4,
         width: MediaQuery.of(context).size.width * 0.6,
-        backgroundColor: Color.fromARGB(86, 255, 0, 187),
+        backgroundColor: Color.fromARGB(232, 234, 235, 240),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -417,9 +417,25 @@ class _MainscreenState extends State<Mainscreen> {
               padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
               child: Column(
                 children: [
+                  
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 50, 25, 0),
+                        
+                        child: TextButton(onPressed: (){}, child: Container(height: 40, width: 40, color: Colors.black12, child: Text('Kiss Heros'),)),
+                      ),
+                        Padding(
+                        padding: EdgeInsets.fromLTRB(0, 50, 25, 0),
+                        child: TextButton(onPressed: (){}, child: Container(height: 40, width: 40, color: Colors.black12, child: Text('Top Grooms'),)),
+                        
+                      ),
+                        Padding(
+                        padding: EdgeInsets.fromLTRB(0, 50, 25, 0),
+                        child: TextButton(onPressed: (){}, child: Container(height: 40, width: 40, color: Colors.black12, child: Text('Most Loved'),)),
+                        
+                      ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 50, 25, 0),
                         child: GlowContainer(
@@ -477,13 +493,18 @@ class _MainscreenState extends State<Mainscreen> {
                     height: 20,
                   ),
                   AspectRatio(
-                    aspectRatio: (300 / 367),
+                    aspectRatio: 1/1.23,
+                    
                     child: PageView.builder(
+                      onPageChanged: (value) {
+                        print(value.toString() + 'wdwdwdw');
+                      },
                         itemCount: widlist.length,
                         physics: const ClampingScrollPhysics(),
                         controller: _pageController,
                         itemBuilder: (context, index) {
                           return AnimatedBuilder(
+                            
                               animation: _pageController,
                               builder: (context, child) {
                                 double value = 0.0;
@@ -498,8 +519,59 @@ class _MainscreenState extends State<Mainscreen> {
                               });
                         }),
                   ),
-               
-                ],
+               SizedBox(height: 30,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      MaterialButton(
+                         focusNode: FocusNode(),
+                        autofocus: true,
+                        clipBehavior: Clip.hardEdge,
+                        onLongPress: () {},
+                      
+                        onPressed: (){},
+                        child: CircleAvatar(
+                          radius: 40,
+                          foregroundImage: AssetImage('res/kiss-mark_1f48b.png'),
+                          backgroundColor: Color.fromARGB(96, 245, 96, 220),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      MaterialButton(
+                        
+                        focusNode: FocusNode(),
+                        autofocus: true,
+                        clipBehavior: Clip.hardEdge,
+                        onLongPress: () {},
+                      
+                        onPressed: (){},
+                        child: CircleAvatar(
+                          radius: 40,
+                          foregroundImage: AssetImage('res/ring_1f48d.png'),
+                          backgroundColor: Color.fromARGB(134, 116, 134, 225),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 20,
+                      ),
+                      MaterialButton(
+                         focusNode: FocusNode(),
+                        autofocus: true,
+                        clipBehavior: Clip.hardEdge,
+                        onLongPress: () {},
+                      
+                        onPressed: (){},
+                        child: CircleAvatar(
+                          radius: 40,
+                          foregroundImage: AssetImage('res/people-hugging_1fac2.png'),
+                          backgroundColor: Color.fromARGB(97, 204, 47, 47),
+                        ),
+                      ),
+                    ],
+                  )
+              ],
               ))),
     );
   }
