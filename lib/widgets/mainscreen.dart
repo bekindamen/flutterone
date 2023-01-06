@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_glow/flutter_glow.dart';
 import 'package:flutterone/widgets/addimgscreen.dart';
@@ -500,7 +501,7 @@ class _MainscreenState extends State<Mainscreen> {
                         print(value.toString() + 'wdwdwdw');
                       },
                         itemCount: widlist.length,
-                        physics: const ClampingScrollPhysics(),
+                        physics: const BouncingScrollPhysics(),
                         controller: _pageController,
                         itemBuilder: (context, index) {
                           return AnimatedBuilder(
@@ -529,7 +530,9 @@ class _MainscreenState extends State<Mainscreen> {
                         clipBehavior: Clip.hardEdge,
                         onLongPress: () {},
                       
-                        onPressed: (){},
+                        onPressed: (){_pageController.nextPage(duration: Duration(milliseconds: 500), curve:Curves.slowMiddle);
+                        swipefunc(pagenum: _pageController.page.toString());
+                        },
                         child: CircleAvatar(
                           radius: 40,
                           foregroundImage: AssetImage('res/kiss-mark_1f48b.png'),
@@ -546,7 +549,9 @@ class _MainscreenState extends State<Mainscreen> {
                         clipBehavior: Clip.hardEdge,
                         onLongPress: () {},
                       
-                        onPressed: (){},
+                        onPressed: (){_pageController.nextPage(duration: Duration(milliseconds: 500), curve:Curves.slowMiddle);
+                        swipefunc(pagenum: _pageController.page.toString());
+                        },
                         child: CircleAvatar(
                           radius: 40,
                           foregroundImage: AssetImage('res/ring_1f48d.png'),
@@ -562,7 +567,10 @@ class _MainscreenState extends State<Mainscreen> {
                         clipBehavior: Clip.hardEdge,
                         onLongPress: () {},
                       
-                        onPressed: (){},
+                        onPressed: (){_pageController.nextPage(duration: Duration(milliseconds: 500), curve: Curves.slowMiddle );
+                        swipefunc(pagenum: _pageController.page.toString());
+                        },
+
                         child: CircleAvatar(
                           radius: 40,
                           foregroundImage: AssetImage('res/people-hugging_1fac2.png'),
@@ -574,5 +582,9 @@ class _MainscreenState extends State<Mainscreen> {
               ],
               ))),
     );
+  }
+  swipefunc({required String pagenum}){
+
+    //do some async
   }
 }

@@ -26,7 +26,9 @@ import 'package:flutterone/widgets/samlls/bubble.dart';
  
 
 Future main() async {
- 
+  var widgetsBinding = WidgetsBinding.instance;
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+await FirebaseAuth.instance.authStateChanges();
    WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(
