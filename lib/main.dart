@@ -2,7 +2,7 @@
 // ignore_for_file: use_key_in_widget_constructors
 // ignore_for_file: prefer_const_literals_to_create_immutables
 
-import 'dart:io';
+import 'dart:io'; 
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,6 +13,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_glow/flutter_glow.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutterone/conncheck.dart';
 
 
@@ -22,17 +23,21 @@ import 'package:flutterone/widgets/login.dart';
 import 'package:flutterone/widgets/mainscreen.dart';
 import 'package:flutterone/widgets/samlls/bubble.dart';
 
+ 
+
 Future main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+ 
+   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   await FirebaseMessaging.instance.setAutoInitEnabled(true);
+ FlutterNativeSplash.remove();
 
   runApp(MyApp());
 }
 
-final _random = Random();
+
 bool tomain = false;
 
 class MyApp extends StatelessWidget {
