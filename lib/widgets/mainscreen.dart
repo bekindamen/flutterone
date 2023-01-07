@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, sort_child_properties_last, unnecessary_const, prefer_const_literals_to_create_immutables, curly_braces_in_flow_control_structures
 
 import 'dart:convert';
- 
+
+import 'package:palette_generator/palette_generator.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
@@ -61,6 +63,9 @@ class _MainscreenState extends State<Mainscreen> {
   String pp = '';
   bool isDA = false;
   int? age;
+  Color bgggradcolor = Colors.redAccent;
+  List<String> imageslist = [];
+    List<String> imglist=[] ;
 
   getlinkbyage() async {
     var resage = await http.get(Uri.parse(
@@ -74,70 +79,73 @@ class _MainscreenState extends State<Mainscreen> {
     );
 
     Map<String, dynamic> map = jsonDecode(res3.body.toString());
-  
-  
     List<dynamic> map2 = map['data']['images'];
-    map2.forEach((e)async {
+    map2.forEach((e) async {
       var map4 = jsonEncode(e);
       var map3 = jsonDecode(map4);
       String id = map3['_id'];
       String link = map3['link'];
-       List<String> imageslist = [];
-
-    var  res =await http.get(Uri.parse('http://54.234.140.51:8000/api/personaldata/' + id));
-    Map<String, dynamic> map = jsonDecode(res.body.toString());
-   List<dynamic> imageslisttemp = map['data']['images'];
-    imageslisttemp.forEach((element) { imageslist.add(element['link']);});
+      imglist.add(link);
+      var res = await http
+          .get(Uri.parse('http://54.234.140.51:8000/api/personaldata/' + id));
+      Map<String, dynamic> map = jsonDecode(res.body.toString());
+      List<dynamic> imageslisttemp = map['data']['images'];
+      imageslisttemp.forEach((element) {
+        imageslist.add(element['link']);
+      });
       widlist.add(GestureDetector(
-        onTap: ( ) {
-       
-            Navigator.push(
-                context,
-                PageRouteBuilder(
-                  pageBuilder: (context, animation, secondaryAnimation) =>
-                      Opened(
-                    url: link,
-                    id: id,
-                  ),
-                  transitionsBuilder:
-                      (context, animation, secondaryAnimation, child) {
-                    return CupertinoPageTransition(
-                      linearTransition: true,
-                      primaryRouteAnimation: animation,
-                      secondaryRouteAnimation: secondaryAnimation,
-                      child: child,
-                    );
-                  },
-                ));
-          
+        onTap: () {
+          Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (context, animation, secondaryAnimation) => Opened(
+                  url: link,
+                  id: id,
+                ),
+                transitionsBuilder:
+                    (context, animation, secondaryAnimation, child) {
+                  return CupertinoPageTransition(
+                    linearTransition: true,
+                    primaryRouteAnimation: animation,
+                    secondaryRouteAnimation: secondaryAnimation,
+                    child: child,
+                  );
+                },
+              ));
         },
         child: Padding(
           padding: EdgeInsets.all(13),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(30),
-          
-              child: SingleChildScrollView(
-                
-                child: Column(
-                  children: [
-               
-
-                    Card(
-                        shadowColor: Colors.black38,
-                        elevation: 10,
-                        color: Color.fromARGB(99, 0, 0, 0),
-                        child: Hero(
-                          tag: link,
-                          child: ClipRRect(borderRadius: BorderRadius.circular(10), child: Image( width: MediaQuery.of(context).size.width, fit: BoxFit.fill, image: Image.network(link).image)),
-                        ),
-                      ),
-
-                    SizedBox(height: 20,),
-                    Center(child: ListImages(imageslist: imageslist, height: 360, width: 220,))
-                  ],
-                ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Card(
+                    shadowColor: Colors.black38,
+                    elevation: 10,
+                    color: Color.fromARGB(99, 0, 0, 0),
+                    child: Hero(
+                      tag: link,
+                      child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: Image(
+                              width: MediaQuery.of(context).size.width,
+                              fit: BoxFit.fill,
+                              image: Image.network(link).image)),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Center(
+                      child: ListImages(
+                    imageslist: imageslist,
+                    height: 360,
+                    width: 220,
+                  ))
+                ],
               ),
-          
+            ),
           ),
         ),
       ));
@@ -405,12 +413,12 @@ class _MainscreenState extends State<Mainscreen> {
           ],
         ),
       ),
-      body: Container(
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  colors: [Colors.pink, Colors.redAccent],
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft)),
+      body:Container(
+ decoration: BoxDecoration(
+          gradient: LinearGradient(
+              colors: [Colors.pink, bgggradcolor],
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft)), 
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           alignment: Alignment.center,
@@ -418,24 +426,41 @@ class _MainscreenState extends State<Mainscreen> {
               padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
               child: Column(
                 children: [
-                  
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 50, 25, 0),
-                        
-                        child: TextButton(onPressed: (){}, child: Container(height: 40, width: 40, color: Colors.black12, child: Text('Kiss Heros'),)),
+                        child: TextButton(
+                            onPressed: () {},
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              color: Colors.black12,
+                              child: Text('Kiss Heros'),
+                            )),
                       ),
-                        Padding(
+                      Padding(
                         padding: EdgeInsets.fromLTRB(0, 50, 25, 0),
-                        child: TextButton(onPressed: (){}, child: Container(height: 40, width: 40, color: Colors.black12, child: Text('Top Grooms'),)),
-                        
+                        child: TextButton(
+                            onPressed: () {},
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              color: Colors.black12,
+                              child: Text('Top Grooms'),
+                            )),
                       ),
-                        Padding(
+                      Padding(
                         padding: EdgeInsets.fromLTRB(0, 50, 25, 0),
-                        child: TextButton(onPressed: (){}, child: Container(height: 40, width: 40, color: Colors.black12, child: Text('Most Loved'),)),
-                        
+                        child: TextButton(
+                            onPressed: () {},
+                            child: Container(
+                              height: 40,
+                              width: 40,
+                              color: Colors.black12,
+                              child: Text('Most Loved'),
+                            )),
                       ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(0, 50, 25, 0),
@@ -494,18 +519,21 @@ class _MainscreenState extends State<Mainscreen> {
                     height: 20,
                   ),
                   AspectRatio(
-                    aspectRatio: 1/1.23,
-                    
+                    aspectRatio: 1 / 1.23,
                     child: PageView.builder(
-                      onPageChanged: (value) {
-                        print(value.toString() + 'wdwdwdw');
-                      },
+                        onPageChanged: (value) async {
+                          if(value !=0 && value != 1){
+                          Color color =
+                              await _updatePaletteGenerator(imglist[value-2]);
+                          setState(() {
+                            bgggradcolor = color;
+                          });}
+                        },
                         itemCount: widlist.length,
                         physics: const BouncingScrollPhysics(),
                         controller: _pageController,
                         itemBuilder: (context, index) {
                           return AnimatedBuilder(
-                            
                               animation: _pageController,
                               builder: (context, child) {
                                 double value = 0.0;
@@ -520,22 +548,27 @@ class _MainscreenState extends State<Mainscreen> {
                               });
                         }),
                   ),
-               SizedBox(height: 30,),
+                  SizedBox(
+                    height: 30,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       MaterialButton(
-                         focusNode: FocusNode(),
+                        focusNode: FocusNode(),
                         autofocus: true,
                         clipBehavior: Clip.hardEdge,
                         onLongPress: () {},
-                      
-                        onPressed: (){_pageController.nextPage(duration: Duration(milliseconds: 500), curve:Curves.slowMiddle);
-                        swipefunc(pagenum: _pageController.page.toString());
+                        onPressed: () {
+                          _pageController.nextPage(
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.slowMiddle);
+                          swipefunc(pagenum: _pageController.page!.toInt(), choice: 'kiss');
                         },
                         child: CircleAvatar(
                           radius: 40,
-                          foregroundImage: AssetImage('res/kiss-mark_1f48b.png'),
+                          foregroundImage:
+                              AssetImage('res/kiss-mark_1f48b.png'),
                           backgroundColor: Color.fromARGB(96, 245, 96, 220),
                         ),
                       ),
@@ -543,14 +576,15 @@ class _MainscreenState extends State<Mainscreen> {
                         width: 20,
                       ),
                       MaterialButton(
-                        
                         focusNode: FocusNode(),
                         autofocus: true,
                         clipBehavior: Clip.hardEdge,
                         onLongPress: () {},
-                      
-                        onPressed: (){_pageController.nextPage(duration: Duration(milliseconds: 500), curve:Curves.slowMiddle);
-                        swipefunc(pagenum: _pageController.page.toString());
+                        onPressed: () {
+                          _pageController.nextPage(
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.slowMiddle);
+                          swipefunc(pagenum: _pageController.page!.toInt(), choice: 'marry');
                         },
                         child: CircleAvatar(
                           radius: 40,
@@ -562,29 +596,87 @@ class _MainscreenState extends State<Mainscreen> {
                         width: 20,
                       ),
                       MaterialButton(
-                         focusNode: FocusNode(),
+                        focusNode: FocusNode(),
                         autofocus: true,
                         clipBehavior: Clip.hardEdge,
                         onLongPress: () {},
-                      
-                        onPressed: (){_pageController.nextPage(duration: Duration(milliseconds: 500), curve: Curves.slowMiddle );
-                        swipefunc(pagenum: _pageController.page.toString());
+                        onPressed: () {
+                          _pageController.nextPage(
+                              duration: Duration(milliseconds: 500),
+                              curve: Curves.slowMiddle);
+                          swipefunc(pagenum: _pageController.page!.toInt(), choice: 'hug');
                         },
-
                         child: CircleAvatar(
                           radius: 40,
-                          foregroundImage: AssetImage('res/people-hugging_1fac2.png'),
+                          foregroundImage:
+                              AssetImage('res/people-hugging_1fac2.png'),
                           backgroundColor: Color.fromARGB(97, 204, 47, 47),
                         ),
                       ),
                     ],
-                  )
-              ],
+                  ),
+                 ],
               ))),
     );
   }
-  swipefunc({required String pagenum}){
+   swipefunc({required int pagenum, required String choice})async {
+    var push = await http.get(Uri.parse('http://54.234.140.51:8082'));
+   
+    if(choice=='kiss'){
+       Map<String, Map<String, Map<String, String>>> bodydata1 =
+          <String, Map<String, Map<String, String>>>{
+        push.body.toString(): {
+          "kiss": {"link": imglist[pagenum]}
+        }
+      };
+       var res1 = await http.put(
+        Uri.parse('http://54.234.140.51:8000/api/personaldata/' + FirebaseAuth.instance.currentUser!.uid),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bodydata1),
+      );
+      print(res1.body);
+      
+    }else if(choice=='marry'){
+      
+      String imglink = imageslist[pagenum];
+    Map<String, Map<String, Map<String, String>>> bodydata1 =
+          <String, Map<String, Map<String, String>>>{
+        push.body.toString(): {
+          "marry": {"link": imglist[pagenum]}
+        }
+      };
+       var res1 = await http.put(
+        Uri.parse('http://54.234.140.51:8000/api/personaldata/' + FirebaseAuth.instance.currentUser!.uid),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bodydata1),
+      );
+    }
+    else{
+      String imglink = imageslist[pagenum];
+          Map<String, Map<String, Map<String, String>>> bodydata1 =
+          <String, Map<String, Map<String, String>>>{
+        push.body.toString(): {
+          "hug": {"link": imglist[pagenum]}
+        }
+      };
+       var res1 = await http.put(
+        Uri.parse('http://54.234.140.51:8000/api/personaldata/' + FirebaseAuth.instance.currentUser!.uid),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(bodydata1),
+      );
+    }
+  }
 
-    //do some async
+  Future<Color> _updatePaletteGenerator(String imageurl) async {
+    var paletteGenerator = await PaletteGenerator.fromImageProvider(
+      Image.network(imageurl).image,
+    );
+    return paletteGenerator.dominantColor!.color;
   }
 }

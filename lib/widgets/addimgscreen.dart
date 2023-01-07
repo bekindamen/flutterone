@@ -55,13 +55,14 @@ class _AddImgScreenState extends State<AddImgScreen> {
     return mylist;
   }
 
-// Stream<bool> getboolstream(Future<bool> mybool )async*{
-//   while (true){
-//     yield await mybool;
-//     Future.delayed(Duration(microseconds: 500));
-//   }
+Stream<bool> getboolstream( )async*{
+  while (true){
+    yield AvatarState.imagepicked;
+    await Future.delayed(Duration(microseconds: 500));
+    
+  }
   
-// }
+}
 
 
   bool loading = false;
@@ -306,7 +307,7 @@ else {
                         ),
                     ),
                 StreamBuilder(
-                    stream: Future.value(AvatarState.imagepicked).asStream(),
+                    stream: getboolstream(),
                     builder: (con, snap) {
                       
                             if (AvatarState.imagepicked) {

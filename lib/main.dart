@@ -26,10 +26,8 @@ import 'package:flutterone/widgets/samlls/bubble.dart';
  
 
 Future main() async {
-  var widgetsBinding = WidgetsBinding.instance;
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
-await FirebaseAuth.instance.authStateChanges();
-   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(statusBarColor: Colors.transparent));
@@ -43,8 +41,8 @@ await FirebaseAuth.instance.authStateChanges();
 bool tomain = false;
 
 class MyApp extends StatelessWidget {
- 
-  
+
+
   @override
   Widget build(BuildContext context) {
     
